@@ -19,10 +19,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration
+//@Configuration
 public class SecurityConfiguration {
 
-    @Bean
+//    @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
         OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
