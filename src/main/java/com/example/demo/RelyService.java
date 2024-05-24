@@ -17,12 +17,18 @@ public class RelyService {
     public void get() {
         System.out.println("get");
         RelyingPartyRegistration okta = relyingPartyRegistrationRepository.findByRegistrationId("okta");
+        RelyingPartyRegistration azure = relyingPartyRegistrationRepository.findByRegistrationId("azure");
         RelyingPartyRegistration okta2 = relyingPartyRegistrationRepository.findByRegistrationId("idpEntityId");
         RelyingPartyRegistration okta3 = relyingPartyRegistrationRepository.findByRegistrationId("http://www.okta.com/exkh80bqywy7ffjqV5d7");
 
+        System.out.println("okta 有值" + okta);
+        System.out.println("azure 有值" + azure);
+        System.out.println("okta2" + okta2);
+        System.out.println("okta3" + okta3);
 //        System.out.println(okta.getAssertingPartyDetails().getEntityId());
 //        System.out.println(okta2.getAssertingPartyDetails().getEntityId());
-        System.out.println(okta3.getAssertingPartyDetails().getEntityId());
+//        System.out.println(okta3.getAssertingPartyDetails().getEntityId());
+
 //        Iterator<RelyingPartyRegistration> iterator = inMemoryRelyingPartyRegistrationRepository.iterator();
 //        while (iterator.hasNext()) {
 //            RelyingPartyRegistration relyingPartyRegistration = iterator.next();

@@ -2,8 +2,6 @@ package com.example.demo;
 
 import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.converter.RsaKeyConverters;
@@ -23,15 +21,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@Configuration
-public class Saml2RelyingPartyRegistrationConfigurationEx {
+//@Configuration
+public class Saml2ConfigSpringBoot {
 
-    @Bean
+//    @Bean
     RelyingPartyRegistrationRepository relyingPartyRegistrationRepository() {
 
         Saml2RelyingPartyProperties properties = new Saml2RelyingPartyProperties();
         Saml2RelyingPartyProperties.Registration registration = new Saml2RelyingPartyProperties.Registration();
-        registration.setEntityId("{baseUrl}/saml2/service-provider-metadata/{registrationId}");
+//        registration.setEntityId("{baseUrl}/saml2/service-provider-metadata/{registrationId}");
+        registration.setEntityId("http://www.okta.com/exkh80bqywy7ffjqV5d7");
         Saml2RelyingPartyProperties.Registration.Signing signing = registration.getSigning();
         List<Saml2RelyingPartyProperties.Registration.Signing.Credential> credentials = signing.getCredentials();
         Saml2RelyingPartyProperties.Registration.Signing.Credential credential = new Saml2RelyingPartyProperties.Registration.Signing.Credential();

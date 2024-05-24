@@ -3,8 +3,10 @@ package com.example.demo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
@@ -15,7 +17,19 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrations;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.accept.ContentNegotiationStrategy;
+import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,20 +103,54 @@ public class Saml2DynamicIdpConfig {
 
         OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
         authenticationProvider.setResponseAuthenticationConverter(groupsConverter()); // 确保这是有效的转换器
+//        http.csrf().disable().authorizeHttpRequests().anyRequest().permitAll();
+//        http
+//                .csrf().disable() // 如果您不需要CSRF保护，可以禁用它
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/test/value", "/test/zz", "/login/saml2/sso/okta", "/saml2/service-provider-metadata/okta").permitAll() // 只有 "/test/value" 请求允许所有人访问
+//                        .anyRequest().authenticated() // 其他所有请求需要身份验证
+//                )
+//                .saml2Login(saml2 -> saml2
+//                        .authenticationManager(new ProviderManager(authenticationProvider)) // 设置认证管理器
+//                )
+//                .saml2Logout(withDefaults()); // 配置SAML 2.0 Logout
 
         http
                 .csrf().disable() // 如果您不需要CSRF保护，可以禁用它
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/test/value").permitAll() // 只有 "/test/value" 请求允许所有人访问
-                        .anyRequest().authenticated() // 其他所有请求需要身份验证
+                        .requestMatchers("/saml2/authenticate/okta", "/saml2/authenticate/azure")
+                        .authenticated() .anyRequest().permitAll()
                 )
                 .saml2Login(saml2 -> saml2
                         .authenticationManager(new ProviderManager(authenticationProvider)) // 设置认证管理器
                 )
                 .saml2Logout(withDefaults()); // 配置SAML 2.0 Logout
 
+//        http.csrf().disable().authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers( "/saml2/service-provider-metadata/okta", "/saml2/service-provider-metadata/azure")).saml2Login(saml2 -> saml2
+//                        .authenticationManager(new ProviderManager(authenticationProvider)));
+
+
+//        http
+//                // 禁用CSRF保护，因为SAML通常与CSRF保护不兼容
+//                .csrf().disable()
+//                // 配置授权请求
+//                .authorizeHttpRequests(authorize -> authorize
+//                        // 允许所有人访问所有路径
+//                        .anyRequest().permitAll()
+//                        // 只有以下两个路径需要身份验证
+//                        .requestMatchers("/saml2/service-provider-metadata/okta", "/saml2/service-provider-metadata/azure")
+//                        .authenticated()
+//                )
+//                // 配置SAML2登录
+//                .saml2Login(saml2 -> saml2
+//                                .authenticationManager(new ProviderManager(authenticationProvider))
+//                        // 其他SAML2配置...
+//                );
+
         return http.build();
     }
+
 
 
     private Converter<OpenSaml4AuthenticationProvider.ResponseToken, Saml2Authentication> groupsConverter() {
